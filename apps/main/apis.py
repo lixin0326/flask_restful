@@ -1,5 +1,6 @@
 from flask_restful import Resource, fields, marshal_with
 
+from apps.comm.result import Result
 from apps.main.models import User
 
 #  djangorestframework
@@ -20,15 +21,15 @@ user_fields = {
 }
 
 result = {
-    'status': fields.Integer(),
-    'msg': fields.String,
-    "data": fields.List(fields.Nested(user_fields))
+    'status': fields.Integer(default=200),
+    'msg': fields.String(default='success'),
+    'data': fields.List(fields.Nested(user_fields))
 }
 
 # 装饰 marshal_with
 
 '''
-{
+
     status:
     msg:
     data:[]
@@ -36,8 +37,12 @@ result = {
 '''
 
 
+# 接口
 class IndexApi(Resource):
     @marshal_with(result)
     def get(self):
         users = User.query.all()
         return {'status': 200, 'msg': 'success', 'data': users}
+        # return Result.to_success({
+        #     'data': users
+        # })
